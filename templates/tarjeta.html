@@ -1,0 +1,135 @@
+{% extends "./base.html" %}
+
+{% block title %}Tarjetas{% endblock %}
+
+{% block body %}
+
+<style>
+    .card-custom {
+        border-radius: 15px;
+        box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .titulo {
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+    }
+
+    .btn-custom {
+        border-radius: 10px;
+    }
+
+    .badge-saldo {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+</style>
+
+<!-- 🔥 HEADER -->
+<div class="text-center mb-4">
+    <h2 class="titulo">💳 Gestión de Tarjetas SITU</h2>
+    <p class="text-muted">Registro y control de saldo</p>
+</div>
+
+<!-- 🔥 FORM -->
+<div class="card card-custom mb-4">
+
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">➕ Registrar Tarjeta</h5>
+    </div>
+
+    <div class="card-body">
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-4">
+                    {{ form.codigo.label_tag }}
+                    {{ form.codigo }}
+                </div>
+
+                <div class="col-md-4">
+                    {{ form.monto.label_tag }}
+                    {{ form.monto }}
+                </div>
+
+                <div class="col-md-4">
+                    {{ form.idPasajero.label_tag }}
+                    {{ form.idPasajero }}
+                </div>
+            </div>
+
+            <br>
+
+            <button class="btn btn-success btn-custom">
+                Guardar Tarjeta
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- 🔥 TABLA -->
+<div class="card card-custom">
+
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">📋 Tarjetas Registradas</h5>
+    </div>
+
+    <div class="card-body table-responsive">
+
+        <table class="table table-hover table-striped align-middle">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>Código</th>
+                    <th>Saldo</th>
+                    <th>Pasajero</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for t in tarjetas %}
+                <tr>
+                    <td><strong>{{ t.codigo }}</strong></td>
+
+                    <td>
+                        <span class="badge bg-success badge-saldo">
+                            ${{ t.monto }}
+                        </span>
+                    </td>
+
+                    <td>
+                        👤 {{ t.idPasajero.nombre }} {{ t.idPasajero.apellido }}
+                    </td>
+
+                    <td>
+                        <a class="btn btn-primary btn-sm btn-custom"
+                           href="{% url 'recargar_saldo' t.id %}">
+                            💰 Recargar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+<!-- 🔥 AUTO REFRESH -->
+<script>
+    setInterval(function () {
+        location.reload();
+    }, 5000);
+</script>
+
+{% endblock %}
